@@ -1,0 +1,25 @@
+---
+title: "SDS192 HW7"
+author: "Sameera Jhunjhunwala"
+date: "4/21/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(RMySQL)
+db <- dbConnect(MySQL(), 
+                host = "scidb.smith.edu", 
+                user = "mth292", 
+                password = "RememberPi", 
+                dbname = "citibikes")
+knitr::opts_chunk$set(connection = db, max.print = 20)
+```
+
+```{sql, connection = db, echo = FALSE}
+SHOW TABLES
+```
+
+```{sql, connection = db, echo = FALSE}
+SELECT * FROM \
