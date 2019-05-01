@@ -22,4 +22,4 @@ SHOW TABLES
 ```
 
 ```{sql, connection = db, echo = FALSE}
-SELECT * FROM \
+SELECT * FROM
