@@ -1,25 +1,115 @@
 ---
-title: "SDS192 HW7"
-author: "Sameera Jhunjhunwala"
-date: "4/21/2019"
-output: html_document
+title: “MP4”
+author: “Sameera Jhunjhunwala”
+date: “4/21/2019”
+output:
+ html_document:
+   code_folding: hide
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(RMySQL)
+library(RSQLite)
 db <- dbConnect(MySQL(), 
                 host = "scidb.smith.edu", 
                 user = "mth292", 
                 password = "RememberPi", 
-                dbname = "citibikes")
+                dbname = "citibike")
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-```{sql, connection = db, echo = FALSE}
-SHOW TABLES
+
+```{sql, output.var = "time_square", connection = db, message= FALSE, warning=FALSE}
+SELECT COUNT(*) AS num_trips, 
+    HOUR(t.start_time) As initial_time, t.gender, 
+COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
+COUNT(DISTINCT sm.station_id) AS num_stations,
+    sm.name
+FROM trips t
+INNER JOIN station_months sm ON sm.station_id = t.start_station_id
+WHERE start_station_id = 3374
+AND end_station_id =  2006
+AND gender <> 0 
+GROUP BY initial_time, gender;
 ```
 
-```{sql, connection = db, echo = FALSE}
-SELECT * FROM
+```{sql, output.var = "time_square1", connection = db, message= FALSE, warning=FALSE}
+SELECT COUNT(*) AS num_trips, 
+    HOUR(t.start_time) As initial_time, t.gender, 
+COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
+COUNT(DISTINCT sm.station_id) AS num_stations,
+    sm.name
+FROM trips t
+INNER JOIN station_months sm ON sm.station_id = t.start_station_id
+WHERE start_station_id = 2006
+AND end_station_id = 3374
+AND gender <> 0 
+GROUP BY initial_time, gender;
+```
+
+```{sql, output.var = "time_square2", connection = db, message= FALSE, warning=FALSE}
+SELECT COUNT(*) AS num_trips, 
+    HOUR(t.start_time) As initial_time, t.gender, 
+COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
+COUNT(DISTINCT sm.station_id) AS num_stations,
+    sm.name
+FROM trips t
+INNER JOIN station_months sm ON sm.station_id = t.start_station_id
+WHERE start_station_id = 2006
+AND gender <> 0 
+GROUP BY initial_time, gender;
+```
+
+```{sql, output.var = "time_square3", connection = db, message= FALSE, warning=FALSE}
+SELECT COUNT(*) AS num_trips, 
+    HOUR(t.start_time) As initial_time, t.gender, 
+COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
+COUNT(DISTINCT sm.station_id) AS num_stations,
+    sm.name
+FROM trips t
+INNER JOIN station_months sm ON sm.station_id = t.start_station_id
+WHERE start_station_id = 3374
+AND gender <> 0 
+GROUP BY initial_time, gender;
+```
+
+```{sql,  output.var = "infor_type", connection = db, message= FALSE, warning=FALSE}
+SELECT name
+FROM station_months
+LIMIT 0, 300;
+```
+
+```{sql, connection = db, message= FALSE, warning=FALSE}
+SELECT * 
+FROM trips t 
+INNER JOIN station_months s ON t.start_station_id = s.station_id
+LIMIT 0, 300;
+```
+
+```{r}
+time_square <- time_square %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+time_square
+
+```
+
+
+```{r}
+hours <- ggplot(data = time_square, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) + 
+  geom_point(aes(color = gender))
+hours
+```
+```{r}
+time_square1 <- time_square1 %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+time_square1
+
+```
+```{r}
+hours <- ggplot(data = time_square1, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) + 
+  geom_point(aes(color = gender))
+hours
+```
