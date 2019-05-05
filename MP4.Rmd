@@ -25,7 +25,6 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-
 ```{sql, output.var = "time_square_north", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
@@ -90,7 +89,7 @@ SELECT station_id, name, avg_lat AS lat, avg_lon AS lon
 ```
 
 
-```{r}
+```{r setup, warning=FALSE, message=FALSE}
 locations_sf <- sm_locations %>% 
   st_as_sf(coords = c("lon", "lat"))
 
@@ -102,61 +101,55 @@ map <- leaflet() %>%
 
 ```
 
-```{r}
+```{r setup, warning=FALSE, message=FALSE}
 time_square_north_south <- time_square_north_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 time_square_north_south
 ```
 
-```{r}
+```{r setup, warning=FALSE, message=FALSE}
 time_square_south_north <- time_square_south_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 time_square_south_north
 ```
 
-```{r}
+```{r setup, warning=FALSE, message=FALSE}
 time_square_south <- time_square_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 time_square_south
 ```
 
-```{r}
+```{r setup, warning=FALSE, message=FALSE}
 time_square_north <- time_square_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 time_square_north
 ```
 
-```{r}
-time_square_north <- time_square_north %>%
-  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
-time_square_north
-```
 
-```{r} 
-hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time, y = num_trips)) +
-  geom_line(aes(color = gender)) + 
-  geom_point(aes(color = gender))
-hours3374_2006
-```
-
-
-```{r}
-hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, y = num_trips)) +
-  geom_line(aes(color = gender)) + 
-  geom_point(aes(color = gender))
-hours_2006_3374
-```
-
-```{r}
+```{r setup, warning=FALSE, message=FALSE}
 hours_2006 <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_2006
 ```
 
-```{r}
+```{r setup, warning=FALSE, message=FALSE}
 hours_3374 <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_3374
+```
+
+```{r setup, warning=FALSE, message=FALSE} 
+hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) + 
+  geom_point(aes(color = gender))
+hours3374_2006
+```
+
+```{r setup, warning=FALSE, message=FALSE}
+hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) + 
+  geom_point(aes(color = gender))
+hours_2006_3374
 ```
