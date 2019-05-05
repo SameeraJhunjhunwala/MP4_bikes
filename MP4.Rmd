@@ -113,3 +113,33 @@ hours <- ggplot(data = time_square1, aes(x = initial_time, y = num_trips)) +
   geom_point(aes(color = gender))
 hours
 ```
+
+
+```{r} 
+hours3374_2006 <- ggplot(data = time_square, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) + 
+  geom_point(aes(color = gender))
+hours3374_2006
+```
+
+
+
+```{r}
+hours_2006_3374 <- ggplot(data = time_square1, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) + 
+  geom_point(aes(color = gender))
+hours_2006_3374
+```
+
+
+```{r}
+hours_2006 <- ggplot(data = time_square2, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender))
+hours_2006
+```
+
+```{r}
+hours_3374 <- ggplot(data = time_square3, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender))
+hours_3374
+```
