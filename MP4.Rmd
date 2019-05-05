@@ -15,11 +15,6 @@ library(sf)
 library(sp)
 library(leaflet)
 library(dplyr)
-library(ggmap)
-library(maptools)
-library(broom)
-library(httr)
-library(rgdal)
 #library(wordcountaddin)
 db <- dbConnect(MySQL(), 
                 host = "scidb.smith.edu", 
@@ -150,7 +145,6 @@ hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, 
   geom_point(aes(color = gender))
 hours_2006_3374
 ```
-
 
 ```{r}
 hours_2006 <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips)) +
