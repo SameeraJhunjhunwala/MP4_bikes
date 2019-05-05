@@ -25,18 +25,30 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-Word count: `r wordcountaddin::word_count()`
+Word count: r wordcountaddin::word_count()
+
+
 From our group repository [^1]
 
-This document was rendered at `r format(Sys.time(), "%B %e, %Y at %H:%M:%S"))`
+```{r This document was rendered at `r format(Sys.time(), "%B %e, %Y at %H:%M:%S"))`}
+
+```
+
 
 ------INSERT GIF HERE---------
 
 -----INSERT 800-1200 words WRITING HERE------
 
-![*CitiBike*](https://citibikemiami.com/images/citibikemiamihome.png)
-![*Biker in Central Park*](https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg)
-![*Citibike station in Central Park*](https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg)
+
+![*Biker in Central Park*](https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg){width=350}
+
+
+
+
+![*Citibike station in Central Park*](https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg){width=350}
+
+
+
 
 ```{sql, output.var = "time_square_north", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
@@ -106,7 +118,7 @@ points_sf <- sm_points %>%
   st_as_sf(coords = c("lon", "lat"))
 
 # Creating a fancy bicycle icon
-icon.fa <- makeAwesomeIcon(icon = "cycle", markerColor = "blue", library = "fa",
+icon.fa <- makeAwesomeIcon(icon = "bicycle", markerColor = "red", library = "fa",
                            iconColor = "black")
 # Creating A map of the stations 
 map <- leaflet() %>%
@@ -116,28 +128,21 @@ map <- leaflet() %>%
     icon = icon.fa)
  map
  
+ 
+``` 
+
+
+```{r eval= FALSE}
 # Calculated distance between points, and found total distance by adding values in matrix
 points_sf %>%
   st_distance()
 ```
 
+
 ```{r echo=TRUE, message= FALSE, warning=FALSE}
-#Converting gender from a binary variable to a character variable. By having gender as a factor, we can use it to compare them in the later diagrams (as R now reads it as discrete)
-time_square_north_south <- time_square_north_south %>%
-  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
-
-time_square_south_north <- time_square_south_north %>%
-  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
-
 time_square_south <- time_square_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-time_square_north <- time_square_north %>%
-  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
-```
-
-
-```{r echo=TRUE, message= FALSE, warning=FALSE}
 hours_2006 <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
@@ -145,6 +150,9 @@ hours_2006
 ```
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE}
+time_square_north <- time_square_north %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+
 hours_3374 <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
@@ -152,6 +160,9 @@ hours_3374
 ```
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE} 
+time_square_north_south <- time_square_north_south %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+
 hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender))
@@ -159,6 +170,9 @@ hours3374_2006
 ```
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE}
+time_square_south_north <- time_square_south_north %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+
 hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender))
