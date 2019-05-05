@@ -16,7 +16,7 @@ library(sp)
 library(leaflet)
 library(dplyr)
 library(devtools)
-#library(wordcountaddin)
+library(wordcountaddin)
 db <- dbConnect(MySQL(), 
                 host = "scidb.smith.edu", 
                 user = "mth292", 
