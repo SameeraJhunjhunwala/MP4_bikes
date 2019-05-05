@@ -1,16 +1,26 @@
 ---
-title: “MP4”
-author: “Sameera Jhunjhunwala”
-date: “4/21/2019”
-output:
- html_document:
-   code_folding: hide
+title: "SDS192_Mini_Project_Four"
+author: "Marcela Osorio"
+date: "4/25/2019"
+output: 
+  html_document:
+    code_folding: hide
 ---
 
-```{r setup, message=FALSE, warning=FALSE}
+```{r setup, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(RMySQL)
-library(RSQLite)
+library(tidycensus)
+library(sf)
+library(sp)
+library(leaflet)
+library(dplyr)
+library(ggmap)
+library(maptools)
+library(broom)
+library(httr)
+library(rgdal)
+#library(wordcountaddin)
 db <- dbConnect(MySQL(), 
                 host = "scidb.smith.edu", 
                 user = "mth292", 
@@ -20,12 +30,40 @@ knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
 
-```{sql, output.var = "time_square", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "time_square_north", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
 COUNT(DISTINCT sm.station_id) AS num_stations,
-    sm.name
+    sm.name, sm.avg_lon, sm.avg_lat
+FROM trips t
+INNER JOIN station_months sm ON sm.station_id = t.start_station_id
+WHERE start_station_id = 3374
+AND gender <> 0 
+GROUP BY initial_time, gender;
+```
+ 
+
+```{sql, output.var = "time_square_south", connection = db, message= FALSE, warning=FALSE}
+SELECT COUNT(*) AS num_trips, 
+    HOUR(t.start_time) As initial_time, t.gender, 
+COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
+COUNT(DISTINCT sm.station_id) AS num_stations,
+    sm.name, sm.avg_lon, sm.avg_lat
+FROM trips t
+INNER JOIN station_months sm ON sm.station_id = t.start_station_id
+WHERE start_station_id = 2006
+AND gender <> 0 
+GROUP BY initial_time, gender;
+```
+
+
+```{sql, output.var = "time_square_north_south", connection = db, message= FALSE, warning=FALSE}
+SELECT COUNT(*) AS num_trips, 
+    HOUR(t.start_time) As initial_time, t.gender, 
+COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
+COUNT(DISTINCT sm.station_id) AS num_stations,
+    sm.name, sm.avg_lon, sm.avg_lat
 FROM trips t
 INNER JOIN station_months sm ON sm.station_id = t.start_station_id
 WHERE start_station_id = 3374
@@ -34,12 +72,12 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-```{sql, output.var = "time_square1", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "time_square_south_north", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
 COUNT(DISTINCT sm.station_id) AS num_stations,
-    sm.name
+    sm.name, sm.avg_lon, sm.avg_lat
 FROM trips t
 INNER JOIN station_months sm ON sm.station_id = t.start_station_id
 WHERE start_station_id = 2006
@@ -48,84 +86,66 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-```{sql, output.var = "time_square2", connection = db, message= FALSE, warning=FALSE}
-SELECT COUNT(*) AS num_trips, 
-    HOUR(t.start_time) As initial_time, t.gender, 
-COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
-COUNT(DISTINCT sm.station_id) AS num_stations,
-    sm.name
-FROM trips t
-INNER JOIN station_months sm ON sm.station_id = t.start_station_id
-WHERE start_station_id = 2006
-AND gender <> 0 
-GROUP BY initial_time, gender;
+```{sql, output.var = "sm_locations", connection = db, message= FALSE, warning=FALSE}
+SELECT station_id, name, avg_lat AS lat, avg_lon AS lon
+  FROM station_months 
+  WHERE station_id IN (3374, 2006)
+  GROUP BY station_id ;
 ```
 
-```{sql, output.var = "time_square3", connection = db, message= FALSE, warning=FALSE}
-SELECT COUNT(*) AS num_trips, 
-    HOUR(t.start_time) As initial_time, t.gender, 
-COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
-COUNT(DISTINCT sm.station_id) AS num_stations,
-    sm.name
-FROM trips t
-INNER JOIN station_months sm ON sm.station_id = t.start_station_id
-WHERE start_station_id = 3374
-AND gender <> 0 
-GROUP BY initial_time, gender;
-```
 
-```{sql,  output.var = "infor_type", connection = db, message= FALSE, warning=FALSE}
-SELECT name
-FROM station_months
-LIMIT 0, 300;
-```
+```{r}
+locations_sf <- sm_locations %>% 
+  st_as_sf(coords = c("lon", "lat"))
 
-```{sql, connection = db, message= FALSE, warning=FALSE}
-SELECT * 
-FROM trips t 
-INNER JOIN station_months s ON t.start_station_id = s.station_id
-LIMIT 0, 300;
+map <- leaflet() %>%
+ addTiles() %>%
+ addPolylines(data = sm_locations, lat = ~lat, lng = ~lon) %>%
+ addMarkers(data = locations_sf, popup = ~name)
+ map
+
 ```
 
 ```{r}
-time_square <- time_square %>%
+time_square_north_south <- time_square_north_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
-time_square
-
+time_square_north_south
 ```
 
-
 ```{r}
-hours <- ggplot(data = time_square, aes(x = initial_time, y = num_trips)) +
-  geom_line(aes(color = gender)) + 
-  geom_point(aes(color = gender))
-hours
-```
-```{r}
-time_square1 <- time_square1 %>%
+time_square_south_north <- time_square_south_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
-time_square1
-
+time_square_south_north
 ```
+
 ```{r}
-hours <- ggplot(data = time_square1, aes(x = initial_time, y = num_trips)) +
-  geom_line(aes(color = gender)) + 
-  geom_point(aes(color = gender))
-hours
+time_square_south <- time_square_south %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+time_square_south
 ```
 
+```{r}
+time_square_north <- time_square_north %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+time_square_north
+```
+
+```{r}
+time_square_north <- time_square_north %>%
+  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
+time_square_north
+```
 
 ```{r} 
-hours3374_2006 <- ggplot(data = time_square, aes(x = initial_time, y = num_trips)) +
+hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender))
 hours3374_2006
 ```
 
 
-
 ```{r}
-hours_2006_3374 <- ggplot(data = time_square1, aes(x = initial_time, y = num_trips)) +
+hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender))
 hours_2006_3374
@@ -133,13 +153,15 @@ hours_2006_3374
 
 
 ```{r}
-hours_2006 <- ggplot(data = time_square2, aes(x = initial_time, y = num_trips)) +
-  geom_line(aes(color = gender))
+hours_2006 <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) +
+  geom_point(aes(color = gender))
 hours_2006
 ```
 
 ```{r}
-hours_3374 <- ggplot(data = time_square3, aes(x = initial_time, y = num_trips)) +
-  geom_line(aes(color = gender))
+hours_3374 <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips)) +
+  geom_line(aes(color = gender)) +
+  geom_point(aes(color = gender))
 hours_3374
 ```
