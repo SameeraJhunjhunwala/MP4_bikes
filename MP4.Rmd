@@ -64,7 +64,6 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-
 ```{sql, output.var = "time_square_north_south", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
