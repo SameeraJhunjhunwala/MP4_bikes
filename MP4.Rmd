@@ -50,7 +50,7 @@ From our group repository [^1]
 
 
 
-```{sql, output.var = "time_square_north", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_north", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -63,7 +63,7 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
  
-```{sql, output.var = "time_square_south", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_south", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -76,7 +76,7 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-```{sql, output.var = "time_square_north_south", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_north_south", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -90,7 +90,7 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-```{sql, output.var = "time_square_south_north", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_south_north", connection = db, message= FALSE, warning=FALSE}
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -139,40 +139,40 @@ points_sf %>%
 
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE}
-time_square_south <- time_square_south %>%
+central_park_south <- central_park_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours_2006 <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips)) +
+hours_2006 <- ggplot(data = central_park_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_2006
 ```
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE}
-time_square_north <- time_square_north %>%
+central_park_north <- central_park_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours_3374 <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips)) +
+hours_3374 <- ggplot(data = central_park_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_3374
 ```
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE} 
-time_square_north_south <- time_square_north_south %>%
+central_park_north_south <- central_park_north_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time, y = num_trips)) +
+hours3374_2006 <- ggplot(data = central_park_north_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender))
 hours3374_2006
 ```
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE}
-time_square_south_north <- time_square_south_north %>%
+central_park_south_north <- central_park_south_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, y = num_trips)) +
+hours_2006_3374 <- ggplot(data = central_park_south_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender))
 hours_2006_3374
