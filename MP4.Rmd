@@ -38,7 +38,7 @@ knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
 
-```{sql, output.var = "time_square_north", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_north", connection = db, message= FALSE, warning=FALSE}
 /*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
@@ -52,7 +52,7 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
  
-```{sql, output.var = "time_square_south", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_south", connection = db, message= FALSE, warning=FALSE}
 /*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
@@ -67,7 +67,7 @@ GROUP BY initial_time, gender;
 ```
 
 
-```{sql, output.var = "time_square_north_south", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_north_south", connection = db, message= FALSE, warning=FALSE}
 /*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
@@ -82,7 +82,7 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-```{sql, output.var = "time_square_south_north", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "central_park_south_north", connection = db, message= FALSE, warning=FALSE}
 /*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
@@ -106,8 +106,9 @@ SELECT station_id, name, avg_lat AS lat, avg_lon AS lon
 
 
 
+
 <center>
-![Citibike Station in Central Park](https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg){width=400}
+![*Rental Bike to see Central Park*](https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg){width=400}
 </center>
 
 Citibike Station In Central Park [^1]
@@ -128,8 +129,8 @@ points_sf <- sm_points %>%
   st_as_sf(coords = c("lon", "lat"))
 
 # Creating a fancy bicycle icon
-icon.fa <- makeAwesomeIcon(icon = "bicycle", markerColor = "red", library = "fa",
-                           iconColor = "black")
+icon.fa <- makeAwesomeIcon(icon = "bicycle", markerColor = "blue", library = "fa",
+                           iconColor = "white")
 # Creating A map of the stations 
 map <- leaflet() %>%
  addTiles() %>%
@@ -153,11 +154,11 @@ points_sf %>%
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE, include=FALSE}
 # gender from numerical to categorical/binary
-time_square_south <- time_square_south %>%
+central_park_south <- central_park_south %>%
   mutate(gender = as.factor(if_else(gender == 1, "Male", "Female")))
 
 # alternative graph
-hours_2006 <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips)) +
+hours_2006 <- ggplot(data = central_park_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_2006
@@ -165,11 +166,11 @@ hours_2006
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE, include=FALSE}
 # gender from numerical to categorical/binary
-time_square_north <- time_square_north %>%
+central_park_north <- central_park_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
 # alternative graph
-hours_3374 <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips)) +
+hours_3374 <- ggplot(data = central_park_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_3374
@@ -179,7 +180,7 @@ hours_3374
 
 ```{r, fig.show = "hold", out.width ="50%", warning=FALSE}
 # graph Number of Users Based on Hour of Day/ South Station
-hours_2006_bar <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips, fill = gender)) +
+hours_2006_bar <- ggplot(data = central_park_south, aes(x = initial_time, y = num_trips, fill = gender)) +
   geom_bar(stat = "identity", aes(fill = factor(gender))) +
   theme(panel.background = element_rect(fill = "white"), 
         panel.grid.major.y = element_line(color = "gray", linetype = "dotted"),
@@ -191,7 +192,7 @@ hours_2006_bar <- ggplot(data = time_square_south, aes(x = initial_time, y = num
 hours_2006_bar
 
 # graph Number of Users Based on Hour of Day/ North Station
-hours_3374_bar <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips, fill = gender)) +
+hours_3374_bar <- ggplot(data = central_park_north, aes(x = initial_time, y = num_trips, fill = gender)) +
   geom_bar(stat = "identity", aes(fill = factor(gender))) +
   theme(panel.background = element_rect(fill = "white"), 
         panel.grid.major.y = element_line(color = "gray", linetype = "dotted"),
@@ -218,11 +219,11 @@ hours_3374_bar
 
 ```{r, , fig.show = "hold", out.width ="50%", echo=TRUE, message= FALSE, warning=FALSE} 
 # gender from numerical to categorical/binary
-time_square_north_south <- time_square_north_south %>%
+central_park_north_south <- central_park_north_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
 # graph showing the number of individuals who rented bikes in the north station and dropped them off in the south station
-hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time, 
+hours3374_2006 <- ggplot(data = central_park_north_south, aes(x = initial_time, 
                                                              y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender)) +
@@ -236,11 +237,11 @@ hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time,
 hours3374_2006
 
 # gender from numerical to categorical/binary
-time_square_south_north <- time_square_south_north %>%
+central_park_south_north <- central_park_south_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
 # graph showing the number of individuals who rented bikes in the south station and dropped them off in the north station
-hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, y = num_trips)) +
+hours_2006_3374 <- ggplot(data = central_park_south_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
   geom_point(aes(color = gender)) +
   theme(panel.background = element_rect(fill = "white"), 
@@ -257,7 +258,6 @@ hours_2006_3374
 
 
 
-
 <center>
 ![Biker in Central Park](https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg){width=350}
 </center>
@@ -270,6 +270,6 @@ From our group repository [^3]
 Word count: `r wordcountaddin::word_count()`
 
 
-[^1]: https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg
-[^2]: https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg
-[^3]: https://github.com/SameeraJhunjhunwala/MP4_bikes
+[^1]: Bklyner. "Dot Explores Expanding Bike Share Program Across NYC with Dockless System." https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg.
+[^2]: Tripadvisor. "Rental Bike to See Central Park." https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg
+[^3]: GitHub."SameeraJhunjhunwala/MP4_bikes." https://github.com/SameeraJhunjhunwala/MP4_bikes
