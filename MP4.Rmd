@@ -1,11 +1,23 @@
 ---
-title: "How People Use Green Transport in the Greenest Place in NYC!"
-author: "Marcela Osorio, Sameera Jhunjhunwala, Teneil Rhiney"
-date: "May 2nd, 2019"
+title: "Central Park's Citibike System is Dominated by Male Bikers!"
+author: 
+- Marcela Osorio
+- Sameera Jhunjhunwala
+- Teneil Rhiney
+
+date: "`r format(Sys.Date(), '%B %e, %Y')`"
 output: 
   html_document:
     code_folding: hide
+    fontsize: 12pt
+    theme: united
+    highlight: tango
+    fig_width: 7
+    fig_height: 4
+    fig_caption: true
 ---
+
+
 ```{r setup, warning=FALSE, message=FALSE, include=FALSE}
 library(tidyverse)
 library(RMySQL)
@@ -25,32 +37,9 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-Word count: r wordcountaddin::word_count()
 
-
-From our group repository [^1]
-
-```{r This document was rendered at `r format(Sys.time(), "%B %e, %Y at %H:%M:%S"))`}
-
-```
-
-
-------INSERT GIF HERE---------
-
------INSERT 800-1200 words WRITING HERE------
-
-
-![*Biker in Central Park*](https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg){width=350}
-
-
-
-
-![*Citibike station in Central Park*](https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg){width=350}
-
-
-
-
-```{sql, output.var = "central_park_north", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "time_square_north", connection = db, message= FALSE, warning=FALSE}
+/*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -63,7 +52,8 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
  
-```{sql, output.var = "central_park_south", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "time_square_south", connection = db, message= FALSE, warning=FALSE}
+/*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -76,7 +66,9 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-```{sql, output.var = "central_park_north_south", connection = db, message= FALSE, warning=FALSE}
+
+```{sql, output.var = "time_square_north_south", connection = db, message= FALSE, warning=FALSE}
+/*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -90,7 +82,8 @@ AND gender <> 0
 GROUP BY initial_time, gender;
 ```
 
-```{sql, output.var = "central_park_south_north", connection = db, message= FALSE, warning=FALSE}
+```{sql, output.var = "time_square_south_north", connection = db, message= FALSE, warning=FALSE}
+/*here we used anindex column start_station_id = 3374 to speed up*/
 SELECT COUNT(*) AS num_trips, 
     HOUR(t.start_time) As initial_time, t.gender, 
 COUNT(DISTINCT DATE(t.start_time)) AS num_days, 
@@ -110,6 +103,24 @@ SELECT station_id, name, avg_lat AS lat, avg_lon AS lon
   WHERE station_id IN (3374, 2006)
   GROUP BY station_id;
 ```
+
+
+
+<center>
+![Citibike Station in Central Park](https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg){width=400}
+</center>
+
+Citibike Station In Central Park [^1]
+
+
+### North Station Vs South Station 
+
+\indeed Is biking gendered? In the busy, noisy concrete jungle that is NYC, Central Park can often seem like the only escape to greenery. One of the greatest things about Central Park is its size. This makes it a popular destination for New Yorkers to stroll, run, have picnics and of course ride bikes. Citi Bikes were implemented on May 27, 2013, to navigate through the hectic traffic of both motor vehicles and people. To get a better understanding of this new trend that people are raving about, we explored the CitiBike database in SQL containing the information for each Citibike station in NYC and details of each individual Citibike ride in 2017 in NYC.  
+
+\indeed There are several Citi Bike stations located near Central Park, but the two main access points are in the North Station and South Station of the Park. Therefore, we selected the Citibike station on Central Park North & Adam Clayton Powell Blvd (North of the Park) and Central Park S & 6 Ave (South of the Park) to analyze the popularity of these two locations by gender. According to the Citibike data, the maximum number of trips taken per year in South Station is 59,604 for males and 19,596 for females. In reverse, the maximum number of trips taken in the North station is 19,224 for males and 11,820 for females. Based on these statistics, it is safe to say that CitiBikes are being utilized  more South of the Park in comparison to North of the Park.  
+
+
+
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE}
 # Converting to sf
@@ -137,45 +148,128 @@ points_sf %>%
   st_distance()
 ```
 
+\indeed In order to further evaluate gender differences and similarities between the North  and South Stations, we assessed the number of trips across Central Park and the direction of those trips (North to South or South to North). We presume that majority of the individuals who rents a Citibike in the north station and drop it off at the south station (and vice versa) are likely to be renting the Citibike with the intention of riding it through the park. This assumption was not supported, from north to south there was only 924 round trips and from south to north was 1,620 round trips. In contrast with the initial number of trips for Central Park North and Central Park South, we found a significant decrease in the number of trips. Regardless of where most people (male or female) start out their biking journey, majority of those trips end at different locations.  
 
-```{r echo=TRUE, message= FALSE, warning=FALSE}
-central_park_south <- central_park_south %>%
-  mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours_2006 <- ggplot(data = central_park_south, aes(x = initial_time, y = num_trips)) +
+```{r echo=TRUE, message= FALSE, warning=FALSE, include=FALSE}
+# gender from numerical to categorical/binary
+time_square_south <- time_square_south %>%
+  mutate(gender = as.factor(if_else(gender == 1, "Male", "Female")))
+
+# alternative graph
+hours_2006 <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_2006
 ```
 
-```{r echo=TRUE, message= FALSE, warning=FALSE}
-central_park_north <- central_park_north %>%
+```{r echo=TRUE, message= FALSE, warning=FALSE, include=FALSE}
+# gender from numerical to categorical/binary
+time_square_north <- time_square_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours_3374 <- ggplot(data = central_park_north, aes(x = initial_time, y = num_trips)) +
+# alternative graph
+hours_3374 <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) +
   geom_point(aes(color = gender))
 hours_3374
 ```
 
-```{r echo=TRUE, message= FALSE, warning=FALSE} 
-central_park_north_south <- central_park_north_south %>%
+
+
+```{r, fig.show = "hold", out.width ="50%", warning=FALSE}
+# graph Number of Users Based on Hour of Day/ South Station
+hours_2006_bar <- ggplot(data = time_square_south, aes(x = initial_time, y = num_trips, fill = gender)) +
+  geom_bar(stat = "identity", aes(fill = factor(gender))) +
+  theme(panel.background = element_rect(fill = "white"), 
+        panel.grid.major.y = element_line(color = "gray", linetype = "dotted"),
+        panel.border = element_rect(linetype = "solid", fill = NA)) +
+  labs(title= "Central Park S & 6 Ave Station: 
+       Number of Users Based on Hour of Day",
+                      y="Average Number of Trips in 2017", x = "Hours of a Day") +
+  facet_wrap(~gender)
+hours_2006_bar
+
+# graph Number of Users Based on Hour of Day/ North Station
+hours_3374_bar <- ggplot(data = time_square_north, aes(x = initial_time, y = num_trips, fill = gender)) +
+  geom_bar(stat = "identity", aes(fill = factor(gender))) +
+  theme(panel.background = element_rect(fill = "white"), 
+        panel.grid.major.y = element_line(color = "gray", linetype = "dotted"),
+        panel.border = element_rect(linetype = "solid", fill = NA)) +
+  labs(title= "Central Park North & Adam Clayton Powell Blvd Station: 
+       Number of Users Based on Hour of Day",
+                      y="Average Number of Trips in 2017", x = "Hours of a Day") +
+  facet_wrap(~gender)
+hours_3374_bar
+
+
+```
+![Figure 1]
+
+
+\indeed We aggregated the number of trips taken by males and females by the hour of the day and averaged it over all the days in 2017. By doing so, we found that the maximum number of trips taken in the north was between 8:00 am and 9:00 am for both genders. Conversely,  the maximum number of biking trips taken in the south was between 4:00 pm and 5:00 pm for both genders. This data reveals that males and females use Citibike at similar times of the day.
+
+\indeed Interestingly, the peak biking hours for both genders in the North and South corresponds with the traditional business hours, 9:00 am to 5:00 pm.  For this reason, we can speculate that maybe Central Park North station is a busier starting point in the mornings hours because it is more residential and people are most likely, biking through the park in order to get to work or as part of a morning fitness regime. While Central Park South is a busier starting point in the afternoon because it marks the end of the traditional workday for most people.  
+
+
+
+
+
+
+```{r, , fig.show = "hold", out.width ="50%", echo=TRUE, message= FALSE, warning=FALSE} 
+# gender from numerical to categorical/binary
+time_square_north_south <- time_square_north_south %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours3374_2006 <- ggplot(data = central_park_north_south, aes(x = initial_time, y = num_trips)) +
+# graph showing the number of individuals who rented bikes in the north station and dropped them off in the south station
+hours3374_2006 <- ggplot(data = time_square_north_south, aes(x = initial_time, 
+                                                             y = num_trips)) +
   geom_line(aes(color = gender)) + 
-  geom_point(aes(color = gender))
+  geom_point(aes(color = gender)) +
+  theme(panel.background = element_rect(fill = "white"), 
+        panel.grid.major.y = element_line(color = "gray", linetype = "dotted"),
+        panel.border = element_rect(linetype = "solid", fill = NA)) +
+  labs(title= "From the North Station to the South Station: 
+       Number of User Based on Hour of the Day",
+                      y="Average Number of Trips in 2017", x = "Hours of a Day") +
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24)) 
 hours3374_2006
-```
 
-```{r echo=TRUE, message= FALSE, warning=FALSE}
-central_park_south_north <- central_park_south_north %>%
+# gender from numerical to categorical/binary
+time_square_south_north <- time_square_south_north %>%
   mutate(gender =  as.factor(if_else(gender == 1, "Male", "Female")))
 
-hours_2006_3374 <- ggplot(data = central_park_south_north, aes(x = initial_time, y = num_trips)) +
+# graph showing the number of individuals who rented bikes in the south station and dropped them off in the north station
+hours_2006_3374 <- ggplot(data = time_square_south_north, aes(x = initial_time, y = num_trips)) +
   geom_line(aes(color = gender)) + 
-  geom_point(aes(color = gender))
+  geom_point(aes(color = gender)) +
+  theme(panel.background = element_rect(fill = "white"), 
+        panel.grid.major.y = element_line(color = "gray", linetype = "dotted"),
+        panel.border = element_rect(linetype = "solid", fill = NA)) +
+  labs(title= "From the South Station to the North Station: 
+       Number of User Based on Hour of the Day",
+                      y="Average Number of Trips in 2017", x = "Hours of a Day") +
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24)) 
 hours_2006_3374
-```
 
-[^1]: https://github.com/SameeraJhunjhunwala/MP4_bikes
+```
+![Figure 2]
+
+
+
+
+<center>
+![Biker in Central Park](https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg){width=350}
+</center>
+
+Biker in Central Park [^2]
+
+From our group repository [^3]
+
+
+Word count: `r wordcountaddin::word_count()`
+
+
+[^1]: https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg
+[^2]: https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg
+[^3]: https://github.com/SameeraJhunjhunwala/MP4_bikes
