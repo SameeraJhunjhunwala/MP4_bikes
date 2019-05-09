@@ -116,9 +116,9 @@ Citibike Station In Central Park [^1]
 
 ### North Station Vs South Station 
 
-\indeed Is biking gendered? In the busy, noisy concrete jungle that is NYC, Central Park can often seem like the only escape to greenery. One of the greatest things about Central Park is its size. This makes it a popular destination for New Yorkers to stroll, run, have picnics and of course ride bikes. Citi Bikes were implemented on May 27, 2013, to navigate through the hectic traffic of both motor vehicles and people. To get a better understanding of this new trend that people are raving about, we explored the CitiBike database in SQL containing the information for each Citibike station in NYC and details of each individual Citibike ride in 2017 in NYC.  
+\indeed Is biking gendered? In the busy, noisy concrete jungle that is NYC, Central Park, which can often seem like the only escape to greenery. Designed by landscape architect Frederick Law Olmsted^[“Frederick Law Olmstead.” WIKIPEDIA.  https://en.wikipedia.org/wiki/Frederick_Law_Olmsted.  Accessed 7 Mayl. 2019] who also designed the Botanic Garden of Smith College^[“The Botanic Garden of Smith College.” _SmithCollege_. https://garden.smith.edu/about/history/early-history-1875-1920. Accessed 7 Mayl. 2019], Central Park is one of the greatest parks in NYC. This makes it a popular destination for New Yorkers to stroll, run, have picnics and of course ride bikes. Citibike was implemented on May 27, 2013 to navigate through the hectic traffic of both motor vehicles and people. To get a better understanding of this new trend that people are raving about, we explored the Citibike database in SQL containing the information for each Citibike station in NYC and details of each individual Citibike ride in 2017 in NYC. 
 
-\indeed There are several Citi Bike stations located near Central Park, but the two main access points are in the North Station and South Station of the Park. Therefore, we selected the Citibike station on Central Park North & Adam Clayton Powell Blvd (North of the Park) and Central Park S & 6 Ave (South of the Park) to analyze the popularity of these two locations by gender. According to the Citibike data, the maximum number of trips taken per year in South Station is 59,604 for males and 19,596 for females. In reverse, the maximum number of trips taken in the North station is 19,224 for males and 11,820 for females. Based on these statistics, it is safe to say that CitiBikes are being utilized  more South of the Park in comparison to North of the Park.  
+\indeed There are several Citibike stations located near Central Park, but the two main access points that we are interested in, are in the North Station and South Station of the Park. Therefore, we selected the Citibike station on Central Park North & Adam Clayton Powell Blvd (North of the Park) and Central Park S & 6 Ave (South of the Park) and analyzed the popularity of these two locations by gender. According to the Citibike data, the maximum number of trips taken per year in South Station is 59,604 for males and 19,596 for females. In reverse, the maximum number of trips taken in the North station is 19,224 for males and 11,820 for females. Based on these information, we can say that Citibike is being used more South of the Park in than North of the Park.  
 
 
 
@@ -149,7 +149,7 @@ points_sf %>%
   st_distance()
 ```
 
-\indeed In order to further evaluate gender differences and similarities between the North  and South Stations, we assessed the number of trips across Central Park and the direction of those trips (North to South or South to North). We presume that majority of the individuals who rents a Citibike in the north station and drop it off at the south station (and vice versa) are likely to be renting the Citibike with the intention of riding it through the park. This assumption was not supported, from north to south there was only 924 round trips and from south to north was 1,620 round trips. In contrast with the initial number of trips for Central Park North and Central Park South, we found a significant decrease in the number of trips. Regardless of where most people (male or female) start out their biking journey, majority of those trips end at different locations.  
+\indeed In order to further evaluate gender differences and similarities between the North and South Stations, we assessed the number of trips across Central Park and the direction of those trips (North to South or South to North). We presume that majority of the individuals who rent a Citibike in the north station and drop it off at the south station (and vice versa) are likely to be renting the Citibike with the intention of riding it through the park. This assumption was not supported, from north to south there were only 924 round trips and from south to north was 1,620 round trips. In contrast with the initial number of trips for Central Park North and Central Park South, we found a significant decrease in the number of trips. Regardless of where most people (male or female) start out their biking journey, the majority of those trips end at different locations.   
 
 
 ```{r echo=TRUE, message= FALSE, warning=FALSE, include=FALSE}
@@ -208,12 +208,9 @@ hours_3374_bar
 ![Figure 1]
 
 
-\indeed We aggregated the number of trips taken by males and females by the hour of the day and averaged it over all the days in 2017. By doing so, we found that the maximum number of trips taken in the north was between 8:00 am and 9:00 am for both genders. Conversely,  the maximum number of biking trips taken in the south was between 4:00 pm and 5:00 pm for both genders. This data reveals that males and females use Citibike at similar times of the day.
+\indeed We aggregated the number of trips taken by males and females by the hour of the day and averaged it over all the days in 2017. By doing so, we found that the maximum number of trips taken in the north was between 8:00 am and 9:00 am for both genders. Conversely,  the maximum number of biking trips taken in the south was between 4:00 pm and 5:00 pm for both genders. This data reveals that males and females use Citibike at similar times of the day. 
 
 \indeed Interestingly, the peak biking hours for both genders in the North and South corresponds with the traditional business hours, 9:00 am to 5:00 pm.  For this reason, we can speculate that maybe Central Park North station is a busier starting point in the mornings hours because it is more residential and people are most likely, biking through the park in order to get to work or as part of a morning fitness regime. While Central Park South is a busier starting point in the afternoon because it marks the end of the traditional workday for most people.  
-
-
-
 
 
 
@@ -257,6 +254,9 @@ hours_2006_3374
 ![Figure 2]
 
 
+\indeed Some might argue that this analysis does not account for all bikers in NYC since people tend to have their own bikes that they ride in the park. Although this is a very valid point, we did a supplementary analysis to evaluate the number of Citibike subscribers in comparison with the new customers. When we analysed 100,000 trips we found that approximately 93,000 were taken by citibike subscribers. This information is in line with our argument that this biking pattern is more of a routine among some users rather than coincidence.  
+
+\indeed In conclusion, we found that the NYC Citibike is more frequently used by males in the South Station and the North Station. Moreover, the North Station is used more during the morning hours while the South station is used in the afternoon. This pattern corresponds with regular business hours; which means that people could be using their CitiBikes to travel back and forth to work. Overall, males and females had a similar pattern of use, the only significant difference we found in the Citibikings system is the number of males that use Citibike in comparison to females. In order to further evaluate the differences by gender future research is needed. 
 
 <center>
 ![Biker in Central Park](https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg){width=350}
@@ -270,6 +270,6 @@ From our group repository [^3]
 Word count: `r wordcountaddin::word_count()`
 
 
-[^1]: Bklyner. "Dot Explores Expanding Bike Share Program Across NYC with Dockless System." https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg.
-[^2]: Tripadvisor. "Rental Bike to See Central Park." https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg
-[^3]: GitHub."SameeraJhunjhunwala/MP4_bikes." https://github.com/SameeraJhunjhunwala/MP4_bikes
+[^1]: "Dot Explores Expanding Bike Share Program Across NYC with Dockless System." Bklyner.  https://s3.amazonaws.com/bklyner/bklyner/wp-content/uploads/2015/07/fgf_citibike_park.jpg.
+[^2]: "Rental Bike to See Central Park." Tripadvisor. https://media-cdn.tripadvisor.com/media/photo-s/11/ee/e7/93/central-park.jpg
+[^3]: "SameeraJhunjhunwala/MP4_bikes." GitHub. https://github.com/SameeraJhunjhunwala/MP4_bikes
